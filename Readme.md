@@ -28,3 +28,20 @@ python merge_and_tokenize_datasets.py --config="example_configs/model_config_en.
 python train_punct_and_capit_model.py --config="example_configs/model_config_en.yaml"
 
 ```
+
+## For inference:
+
+```python
+
+from transformer_punct_and_capit.models import TransformerPunctAndCapitModel
+
+model_path="experiments/model.pcm" # pcm_checkpoint path
+model = TransformerPunctAndCapitModel.restore_model(model_path, device='cuda')
+
+model.predict("how are you") # Single example
+# Output: ["How are you?"]
+
+model.predict_batch(["how are you"], batch_size=64, show_pbar=True) # Batch example
+# Output: ["How are you?"]
+
+```

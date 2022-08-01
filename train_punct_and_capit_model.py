@@ -29,7 +29,7 @@ def main(cfg):
             
     model = TransformerPunctAndCapitModel(cfg)
 
-    trainer = pl.Trainer(gpus=[1], 
+    trainer = pl.Trainer(gpus=[0], 
                          accelerator="gpu",
                          default_root_dir=cfg.exp_dir, **cfg.pl_trainer)
 
