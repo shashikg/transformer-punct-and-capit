@@ -1,4 +1,12 @@
-# Tranformer Based Model for Punctuation and Capitalization Restoration
+# BERT Based Model for Punctuation and Capitalization Restoration
+
+## Features:
+
+* Uses Huggingface Tranformer library for base transformer architecture. 
+* Pytorch Lightning is used for training and checkpoints.
+* Easy config based model description for easy experimenttation and reaearch.
+* Can be exported as a pytorch quantized model for faster inference on CPU.
+* Includes helper function for data preparation, text normalization, and offline sentence augmentation specific for punctuation and capitalization restoration. 
 
 ## Quick guide:
 

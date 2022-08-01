@@ -1,7 +1,7 @@
 save_dir: 'data/preprocessed_text_data' # Directory where processed data will be saved
 
 raw_text_corpus: # Raw text files with corresponding dataset name
-    tatoeba: 'data/raw_data/eng_sentences.txt'
+    tatoeba: 'data/raw_data/tatoeba.txt'
 
 preprocess_config:
     labels_order: c|p # order of labelling c - capit and p - punct
