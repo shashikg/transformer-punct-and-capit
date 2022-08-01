@@ -1,0 +1,15 @@
+save_dir: 'data/preprocessed_text_data' # Directory where processed data will be saved
+
+raw_text_corpus: # Raw text files with corresponding dataset name
+    tatoeba: 'data/raw_data/eng_sentences.txt'
+
+preprocess_config:
+    labels_order: c|p # order of labelling c - capit and p - punct
+    punct_labels: O|.|,|? # Edit this to change which punctuations you want your model to predict. Do not remove 'O'
+    capit_labels: O|C|U # 0. O - for other 1. C - for capital 2. U - for acronym/ uppercased [This is fixed do not change]
+    balancing_margin_ratio: -1 # Use this to balance dataset "-1" means no balancing. "1" will try to balance such that each label contain nearly equal numbers of examples
+    lang_code: 'en' # Used for text normalization
+    split_ratio: 0.03 # To split input raw text corpus into train, dev, and test
+    sent_augmentation:
+        combine_ratio: 0.66 # Used during data prepation from raw punctuated text
+        cut_ratio: 0.2 # Used during data prepation from raw punctuated text

@@ -1,0 +1,13 @@
+tqdm
+contractions
+clean_text
+num2words
+pynini
+pytorch-crf
+msgpack
+transformers
+ray[serve]
+rich
+torchmetrics
+Cython
+nemo_toolkit[all]

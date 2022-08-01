@@ -1,0 +1,70 @@
+experiment_details:
+  save_dir: experiments # Where to save experiment logs and checkpoints
+  model_name: bert_uncased_L-12_H-768_A-12-EN # Modle name
+  
+model:
+  pretrained_model_name: google/bert_uncased_L-12_H-768_A-12 # Pretrianed transformer model name from hugginface library
+  freeze_pretrained_model: false
+  use_crf: true # whether to use CRF layer or not
+  use_bilstm: false # whether to use bilstm layer on top of the transformer
+  labels_dict: null # will be filled during tokenization process
+  labels_order: null # will be filled during tokenization process
+  classification_head:
+    intermediate_layers: null # comma separated hidden dimension for any intermediate layer eg: "128,64"
+    dropout: 0.1
+    activation: ReLU
+    
+tokenizer:
+  path: null
+  train_new: false
+  use_pretrained_tokenizer: true
+  pretrained_model_name: google/bert_uncased_L-12_H-768_A-12
+  
+dataset:
+  data_dir: data/train_data
+  processed_data_dir: data/preprocessed_text_data
+  max_seq_length: 64 # max tokenized sequence length to use during process
+  labels_order: c|p # order of labelling c|p >> "capitalization" and then "punctuation"
+  punct_labels: O|.|,|? # Edit this to change which punctuations you want your model to predict. Do not remove 'O'. Make sure to keep this same in preprocess config
+  capit_labels: O|C|U # 0. O - for other 1. C - for capital 2. U - for acronym/ uppercased [This is fixed do not change]. Make sure to keep this same in preprocess config
+  
+  train_ds:
+    parsed_data_file: null
+    json_data_file: train.json
+    datasets: tatoeba # comma separated dataset list
+    per_data_max_sentence: 3000000 # Limit the number of sentences to use for each dataset
+    shuffle: true
+    batch_size: 256
+    num_workers: 16
+    
+  dev_ds:
+    parsed_data_file: null
+    json_data_file: dev.json
+    datasets: tatoeba
+    per_data_max_sentence: 3000
+    shuffle: false
+    batch_size: 256
+    num_workers: 16
+    
+  augmentation:
+    rate: 0.15
+    type: all
+    sub_style: unk
+    alpha_sub: 0.4
+    alpha_del: 0.4
+    
+  sent_augmentation:
+    combine_ratio: 0.66
+    cut_ratio: 0.2
+    
+pl_trainer:
+  max_epochs: 20
+  accumulate_grad_batches: 1
+  checkpoint_callback: true
+  logger: true
+  log_every_n_steps: 1
+  check_val_every_n_epoch: 1
+  
+optim:
+  lr: 0.0001
+  weight_decay: 1.0e-06
