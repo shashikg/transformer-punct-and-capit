@@ -20,10 +20,10 @@ def loadPackedData(fn):
 
 def writeTextData(fn, txt_corpus):
     os.makedirs(os.path.dirname(fn), exist_ok=True)
-    txt_corpus = "\n".join(txt_corpus)
-    fio = open(fn, "w")
-    fio.write(txt_corpus)
-    fio.close()
+    
+    with open(fn, 'w') as fout:
+        for line in tqdm(txt_corpus, desc='writing'):
+            fout.write(line + '\n')
 
 def readTextData(fn):
     txt_corpus = []
