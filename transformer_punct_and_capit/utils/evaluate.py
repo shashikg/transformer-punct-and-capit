@@ -14,6 +14,25 @@ import torchmetrics
 from tqdm import tqdm
 from ..metric import ClassificationStatScores
 
+re_multi_punct_remover = re.compile(r'([!*+,.:;<=>?_|~-])[!*+,.:;<=>?_|~-]+')
+def clean_text(text):
+    text = re.sub('-|~|\[.+?\]|\(.+?\)|\{.+?\}|\$|\^|\+|\=|\>|\<|\|', ' ', text)
+    text = re.sub('¡|¿|»|«|"|…|—|\(|\)|\[|\]', ' ', text)
+    text = clean(text, fix_unicode=True, to_ascii=False, lower=False, no_line_breaks=True, no_punct=False)
+    text = re.sub('( )([!*+,.:;<=>?_|~-])', r'\2', text) # Remove space before punctuation
+    text = re_multi_punct_remover.sub(r'\1', text) # Collapse multiple punctuation into single
+    text = clean(text, fix_unicode=True, to_ascii=False, lower=False, no_line_breaks=True, no_punct=False)
+
+    if (len(text) > 0) and text[0] == "'":
+        text = text[1:]
+
+    if (len(text) > 0) and text[-1] == "'":
+        text = text[:-1]
+    
+    text = text.strip()
+
+    return text
+
 class evaluatePredictions:
     def __init__(self, cfg):
         self.labels_dict = cfg.model.labels_dict
@@ -61,40 +80,7 @@ class evaluatePredictions:
         self.header_map = {'p': 'Punct', 'c': 'Capit', 'All': 'All'}
         
     def clean_text(self, text):
-        if "!" not in self.punct_labels:
-            text = text.replace("!", ".")
-
-        text = re.sub('-|~|\[.+?\]|\(.+?\)|\{.+?\}|\$|\^|\+|\=|\>|\<|\|', ' ', text)
-        text = clean(text,fix_unicode=True,to_ascii=False,lower=False,no_line_breaks=True,no_punct=False)
-
-        for _ in range(2):
-            text = re.sub('"|…|—|\(|\)|\[|\]', ' ', text)
-            text = text.replace("??", "?")
-            text = text.replace("???", "?")
-            text = text.replace("..", ".")
-            text = text.replace(",,", ",")
-            text = text.replace(",,,", ",")
-            text = text.replace("«", " ")
-            text = text.replace("»", " ")
-            text = text.replace("?.", "?")
-            text = text.replace(",.", ",")
-            text = text.replace(" ,", ",")
-            text = text.replace(" .", ".")
-            text = text.replace(" ?", "?")
-            text = text.replace("' ", " ")
-            text = text.replace(" '", " ")
-            text = text.replace("¿", " ")
-            text = text.replace("¡", " ")
-
-            text = clean(text,fix_unicode=True,to_ascii=False,lower=False,no_line_breaks=True,no_punct=False)
-
-        if (len(text) > 0) and text[0] == "'":
-            text = text[1:]
-
-        if (len(text) > 0) and text[-1] == "'":
-            text = text[:-1]
-
-        return text.strip()
+        return clean_text(text)
 
     def get_word_label(self, word):
         label = {}
