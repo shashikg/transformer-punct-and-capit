@@ -53,7 +53,8 @@ def clean_text(text):
     text = re.sub('-|~|\[.+?\]|\(.+?\)|\{.+?\}|\$|\^|\+|\=|\>|\<|\|', ' ', text)
     text = re.sub('¡|¿|»|«|"|…|—|\(|\)|\[|\]', ' ', text)
     text = clean(text, fix_unicode=True, to_ascii=False, lower=False, no_line_breaks=True, no_punct=False)
-    text = re_multi_punct_remover.sub(r'\1', text)
+    text = re.sub('( )([!*+,.:;<=>?_|~-])', r'\2', text) # Remove space before punctuation
+    text = re_multi_punct_remover.sub(r'\1', text) # Collapse multiple punctuation into single
     text = clean(text, fix_unicode=True, to_ascii=False, lower=False, no_line_breaks=True, no_punct=False)
 
     if (len(text) > 0) and text[0] == "'":
@@ -96,14 +97,14 @@ def normalize_text_data(handle, ip_fn, op_fn, punct_labels='O|.|,|?', end_punct_
         if len(re.sub('[0123456789]', '', line)) != len(line):
             sent_need_normalisation.append(line)
         else:
-            if len(text) > 1:
+            if len(line) > 1:
                 norm_txt_corpus.append(line)
             
     print(f"[normalize_text_data]: Out of {len(txt_corpus):,} sentences only {len(sent_need_normalisation):,} need normalization and {len(norm_txt_corpus):,} does not need normalization.")
     
     non_finished = []
     for s_idx in tqdm(range(0, len(sent_need_normalisation), buffer_size), desc="[normalize_text_data]: Normalizing"):
-        obj_refss = [handle.remote({'text': x, 'punct_labels': punct_labels}) for x in sent_need_normalisation[s_idx:s_idx+buffer_size]]
+        obj_refss = [handle.remote(x) for x in sent_need_normalisation[s_idx:s_idx+buffer_size]]
         
         for obj_ref in obj_refss:
             try:
